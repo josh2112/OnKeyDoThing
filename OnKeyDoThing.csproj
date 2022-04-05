@@ -19,6 +19,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Output\**" />
+    <EmbeddedResource Remove="Output\**" />
+    <None Remove="Output\**" />
+    <Page Remove="Output\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="trayicon.ico" />
   </ItemGroup>
 

@@ -46,7 +46,12 @@ namespace Com.Josh2112.OnKeyDoThing
         {
             base.OnStartup( e );
 
-            ShowWindowCommand = new RelayCommand( () => MainWindow.Show() );
+            ShowWindowCommand = new RelayCommand( () =>
+            {
+                MainWindow = MainWindow ?? new MainWindow( mappings );
+                MainWindow.Show();
+            } );
+
             ExitCommand = new RelayCommand( () => Shutdown() );
 
             taskbarIcon = (TaskbarIcon)FindResource( "taskbarIcon" );
@@ -70,8 +75,6 @@ namespace Com.Josh2112.OnKeyDoThing
             }
             else
                 mappings = new ObservableCollection<Mapping>();
-
-            MainWindow = new MainWindow( mappings );
 
             if( isDebugMode ) ShowWindowCommand.Execute( null );
         }
