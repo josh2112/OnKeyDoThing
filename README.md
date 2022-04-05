@@ -1,7 +1,10 @@
 # OnKeyDoThing
+
 Does a thing on a key.
 
-Watches for a global hotkey, then carries out a series of actions which can include the following:
+![image](https://user-images.githubusercontent.com/739972/161840270-7016740e-1587-4377-b458-df71c239e757.png)
+
+Sits in the system tray watching for global hotkeys, then carries out a series of actions which can include the following:
  - Activate a window
  - Minimize a window
  - Simulate a mouse click over a window
