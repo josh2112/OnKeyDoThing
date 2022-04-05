@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="Com.Josh2112.OnKeyDoThing.KeyComboDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Com.Josh2112.OnKeyDoThing"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mdix="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d">
+    
+    <StackPanel HorizontalAlignment="Center" Margin="20" DataContext="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}">
+        <TextBox Text="{Binding Model.KeyCombo.DisplayString, Mode=OneWay}"
+                         TextAlignment="Center" FontSize="32" Width="300" mdix:HintAssist.Hint="Type hotkey" HorizontalContentAlignment="Center">
+            <i:Interaction.Behaviors>
+                <local:InputKeyComboBehavior KeyCombo="{Binding Model.KeyCombo}" x:Name="keyComboBehavior"/>
+            </i:Interaction.Behaviors>
+        </TextBox>
+        <Grid Margin="0,15,0,0">
+            <TextBlock Foreground="{StaticResource MaterialDesignValidationErrorBrush}" Text="{Binding Model.ErrorMessage}"
+                       VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" SnapsToDevicePixels="True" Margin="10,0,0,0">
+                <Button Style="{StaticResource MaterialDesignOutlinedButton}" IsCancel="True" Content="Cancel"
+                        Click="CancelButton_Click"/>
+                <Button Margin="10,0,0,0" IsDefault="True" Content="OK" Command="{Binding AcceptKeyComboEntryCommand}"/>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</UserControl>

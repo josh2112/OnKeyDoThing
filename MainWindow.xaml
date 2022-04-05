@@ -1,0 +1,141 @@
+﻿<Window x:Class="Com.Josh2112.OnKeyDoThing.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Com.Josh2112.OnKeyDoThing"
+        xmlns:mdix="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="{mdix:MaterialDesignFont}"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="On Key, Do Thing" Height="500" Width="550">
+
+    <Window.Resources>
+
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <local:BindingProxy x:Key="mainWindowProxy" DataContext="{Binding}"/>
+
+        <DataTemplate x:Key="HotKeyActionTemplate">
+            <Border Background="{DynamicResource MaterialDesignToolBarBackground}" CornerRadius="4" Margin="0,0,0,10">
+                <DockPanel Margin="10">
+                    <Button DockPanel.Dock="Right" Style="{StaticResource MaterialDesignToolButton}"
+                            Command="{Binding DataContext.RemoveActionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            CommandParameter="{Binding}" ToolTip="Delete this action"
+                            Content="{mdix:PackIcon Kind=Trash}"/>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource MaterialDesignToolButton}"
+                            Command="{Binding DataContext.TestActionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            CommandParameter="{Binding}" ToolTip="Test this action"
+                            Content="{mdix:PackIcon Kind=ChevronRightBox}"/>
+                    <ContentControl Margin="10,0" Content="{Binding}"/>
+                </DockPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:ActivateWindowHotKeyAction}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" TextWrapping="Wrap">
+                    Activate window whose name contains
+                    <TextBox Text="{Binding WindowName, NotifyOnSourceUpdated=True}" Padding="0,0,0,2" Margin="5,4,0,-4" Width="100" 
+                             SourceUpdated="HotKeyAction_PropertyChanged" VerticalAlignment="Center"/>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:MinimizeAllWindowsHotKeyAction}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" TextWrapping="Wrap">
+                    Minimize all windows whose name contains
+                    <TextBox Text="{Binding WindowName, NotifyOnSourceUpdated=True}"  Padding="0,0,0,2" Margin="5,4,0,-4" Width="100" 
+                             SourceUpdated="HotKeyAction_PropertyChanged" VerticalAlignment="Center"/>
+                </TextBlock>
+                
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:SimulateMouseClickHotKeyAction}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" TextWrapping="Wrap">
+                    Simulate mouse left click if over window whose name contains
+                    <TextBox Text="{Binding WindowName, NotifyOnSourceUpdated=True}" Padding="0,0,0,2" Margin="5,4,0,-4" Width="100"
+                             SourceUpdated="HotKeyAction_PropertyChanged"/>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="MappingListItemTemplate">
+            <Grid Margin="20,15" x:Name="root">
+                <DockPanel IsEnabled="{Binding IsEnabled}">
+                    <ComboBox DockPanel.Dock="Bottom" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignComboBox}"
+                              SelectionChanged="AddActionComboBox_SelectionChanged"
+                              ItemsSource="{Binding Source={x:Static local:HotKeyActionRegistry.ActionTypes}}" DisplayMemberPath="Item1"
+                              mdix:HintAssist.Hint="Add action" mdix:HintAssist.HintOpacity="1"/>
+                    
+                    <ItemsControl DockPanel.Dock="Bottom" Margin="0,10,0,0" ItemsSource="{Binding Actions}"
+                                  ItemTemplate="{StaticResource HotKeyActionTemplate}"/>
+
+                    <TextBlock>
+                        On <Hyperlink Click="KeyComboHyperlink_Click" CommandParameter="{Binding}">
+                            <TextBlock Text="{Binding KeyCombo.DisplayString, FallbackValue='&lt;unassigned&gt;'}"/>
+                        </Hyperlink>:
+                    </TextBlock>
+                </DockPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-10,-15,0">
+                    <ToggleButton VerticalAlignment="Center" IsChecked="{Binding IsEnabled, Mode=OneWay}"
+                                  ToolTip="Enabled" Margin="0,0,10,0"
+                                  Checked="IsEnabledButton_CheckChanged" Unchecked="IsEnabledButton_CheckChanged" />
+                    <mdix:PopupBox>
+                        <StackPanel>
+                            <CheckBox Content="Use keyboard hook" IsChecked="{Binding UseKeyboardHook, NotifyOnSourceUpdated=True}"
+                                      Margin="15,10" SourceUpdated="UseKeyboardHookCheckbox_SourceChanged">
+                                <CheckBox.ToolTip>
+                                    <TextBlock TextWrapping="Wrap" MaxWidth="500">
+                                        If checked, this hotkey will be captured with a keyboard hook instead of the
+                                        hotkey mechanism. This allows the original key sequence to pass through to the
+                                        focused app.
+                                    </TextBlock>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
+                            <Separator/>
+                            <Button Margin="5" Style="{StaticResource MaterialDesignFlatButton}" Content="Delete"
+                                    Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                    Command="{Binding DataContext.DeleteMappingCommand, Source={StaticResource mainWindowProxy}}"
+                                    CommandParameter="{Binding}"/>
+                        </StackPanel>
+                    </mdix:PopupBox>
+                </StackPanel>
+
+            </Grid>
+        </DataTemplate>
+
+
+    </Window.Resources>
+
+    <mdix:DialogHost x:Name="dialogHost">
+        <Grid>
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource MaterialDesignHeadline5TextBlock}" Margin="20" Text="On Key, Do Thing"/>
+
+                <ListView ItemsSource="{Binding MappingCollection}" IsSynchronizedWithCurrentItem="True"
+                          ItemTemplate="{StaticResource MappingListItemTemplate}" Margin="20,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignCardsListBoxItem}">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </DockPanel>
+
+            <local:LogViewer VerticalAlignment="Bottom"/>
+
+            <Button Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="10"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Add a new hotkey"
+                    Content="{mdix:PackIcon Kind=Add,Size=24}" Command="{Binding AddMappingCommand}"/>
+        </Grid>
+    </mdix:DialogHost>
+</Window>
