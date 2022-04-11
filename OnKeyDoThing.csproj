@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <RootNamespace>Com.Josh2112.OnKeyDoThing</RootNamespace>
     <Company>Josh2112 Apps</Company>
