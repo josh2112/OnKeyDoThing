@@ -48,8 +48,9 @@ namespace Com.Josh2112.OnKeyDoThing
 
             ShowWindowCommand = new RelayCommand( () =>
             {
-                MainWindow = MainWindow ?? new MainWindow( mappings );
+                MainWindow ??= new MainWindow( mappings );
                 MainWindow.Show();
+                MainWindow.Activate();
             } );
 
             ExitCommand = new RelayCommand( () => Shutdown() );

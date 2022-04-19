@@ -29,7 +29,7 @@ namespace Com.Josh2112.OnKeyDoThing
         {
             var key = Marshal.ReadInt32( lParam );
 
-            if( nCode >= 0 && this.keyCode == key )
+            if( nCode >= 0 && keyCode == key )
             {
                 int iwParam = wParam.ToInt32();
 

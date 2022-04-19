@@ -13,16 +13,16 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <ContextMenu x:Key="taskbarIconContextMenu" Background="{DynamicResource MaterialDesignPaper}">
-                <MenuItem Header="Configuration..." Command="{Binding ShowWindowCommand}"/>
-                <Separator />
-                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
-            </ContextMenu>
+            <tb:TaskbarIcon x:Key="taskbarIcon" IconSource="/trayicon.ico" DoubleClickCommand="{Binding ShowWindowCommand}">
+                <tb:TaskbarIcon.ContextMenu>
+                    <ContextMenu Background="{DynamicResource MaterialDesignPaper}">
+                        <MenuItem Header="Configuration..." Command="{Binding ShowWindowCommand}"/>
+                        <Separator />
+                        <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+                    </ContextMenu>
+                </tb:TaskbarIcon.ContextMenu>
+            </tb:TaskbarIcon>
 
-            <tb:TaskbarIcon x:Key="taskbarIcon" IconSource="/trayicon.ico"
-                        ContextMenu="{StaticResource taskbarIconContextMenu}"
-                        DoubleClickCommand="{Binding ShowWindowCommand}"/>
-            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

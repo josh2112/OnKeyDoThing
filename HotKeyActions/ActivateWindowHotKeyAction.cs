@@ -12,9 +12,6 @@ namespace Com.Josh2112.OnKeyDoThing
     {
         private string _windowName;
 
-        [DllImport( "USER32.DLL" )]
-        public static extern bool SetForegroundWindow( IntPtr hWnd );
-
         public string WindowName
         {
             get { return _windowName; }
@@ -33,5 +30,8 @@ namespace Com.Josh2112.OnKeyDoThing
             }
             else return $"Found no windows with title containing '{WindowName}'";
         }
+
+        [DllImport( "USER32.DLL" )]
+        public static extern bool SetForegroundWindow( IntPtr hWnd );
     }
 }
