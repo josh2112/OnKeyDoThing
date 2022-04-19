@@ -3,7 +3,7 @@
 #define Application   "OnKeyDoThing"
 
 #define Exe           "OnKeyDoThing.exe"
-#define ExeDir        "bin\Release\net5.0-windows"
+#define ExeDir        "bin\Release\net6.0-windows"
 #define ExeVersion    GetFileVersion( AddBackslash( ExeDir ) + Exe )
 
 #define Company       "Josh2112 Apps"
