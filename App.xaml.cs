@@ -1,12 +1,17 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Toolkit.Mvvm.Input;
+using NLog;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Com.Josh2112.OnKeyDoThing
@@ -16,9 +21,9 @@ namespace Com.Josh2112.OnKeyDoThing
     /// </summary>
     public partial class App : Application
     {
-        public static NLog.Logger Logger { get; } = NLog.LogManager.GetCurrentClassLogger();
+        public static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
-        private readonly bool isDebugMode;
+        private bool isDebugMode;
 
         private TaskbarIcon taskbarIcon;
 
@@ -31,7 +36,11 @@ namespace Com.Josh2112.OnKeyDoThing
 
         public App()
         {
-            System.Diagnostics.Debug.Assert( isDebugMode = true );
+            var singleInstanceHelper = new SingleInstanceHelper( "{809c1153-0ad6-47e8-8050-f5356887f525}",
+                () => ShowWindowCommand.Execute( null ), () => Shutdown() );
+            Exit += ( s, e ) => singleInstanceHelper.Dispose();
+
+            Debug.Assert( isDebugMode = true );
 
             var company = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCompanyAttribute>().Company;
             var product = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyProductAttribute>().Product;
@@ -79,5 +88,37 @@ namespace Com.Josh2112.OnKeyDoThing
 
             if( isDebugMode ) ShowWindowCommand.Execute( null );
         }
+    }
+
+    public class SingleInstanceHelper
+    {
+        public class AnotherInstanceOpenException : Exception { }
+
+        private EventWaitHandle eventWaitHandle;
+
+        public SingleInstanceHelper( string appGuid, Action showWindowAction, Action shutdownAction )
+        {
+            try
+            {
+                eventWaitHandle = EventWaitHandle.OpenExisting( appGuid );
+                eventWaitHandle.Set();
+
+                shutdownAction();
+                throw new AnotherInstanceOpenException();
+            }
+            catch( WaitHandleCannotBeOpenedException )
+            {
+                // No instance found, create a new one
+                eventWaitHandle = new EventWaitHandle( false, EventResetMode.AutoReset, appGuid );
+            }
+
+            // Watch for the handle to be signaled (by another instance starting up and create/open main window
+            new Task( () => {
+                while( eventWaitHandle.WaitOne() )
+                    Application.Current.Dispatcher.BeginInvoke( showWindowAction );
+            } ).Start();
+        }
+
+        public void Dispose() => eventWaitHandle.Close();
     }
 }
