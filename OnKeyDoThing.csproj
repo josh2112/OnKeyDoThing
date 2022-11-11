@@ -32,10 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="trayicon.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="MaterialDesignThemes" Version="4.4.0" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
