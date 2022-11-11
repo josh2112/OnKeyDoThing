@@ -1,4 +1,4 @@
-﻿; -- MissionAir Install Script --
+﻿; -- OnKeyDoThing Install Script --
 
 #define Application   "OnKeyDoThing"
 
@@ -17,7 +17,7 @@ AppPublisherURL=https://www.josh2112.com/apps/
 AppCopyright=Copyright (C) 2021 {#Company}
 VersionInfoVersion={#ExeVersion}
 DefaultDirName={commonpf}\{#Company}\{#Application}
-DefaultGroupName={#Company}\{#Application}
+DefaultGroupName={#Company}
 MinVersion=6.1.7601
 Compression=lzma2
 SolidCompression=yes
